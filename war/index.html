@@ -1,0 +1,335 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+<meta name="fb:app_id" content="630015040376496">
+<meta property="fb:admins" content="ganesh.ghag" />
+
+	<script src="jquery-1.7.2.min.js" type="text/javascript"></script>
+	<script src="json2.js" type="text/javascript"></script>
+	<script src="text.js" type="text/javascript"></script>
+	<script src="jquery.blockUI.js" type="text/javascript"></script>
+	
+</head>
+<body>
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '630015040376496', // App ID
+    channelUrl : '//mazhibus.appspot.com/channel.html', // Channel File
+    status     : true, // check login status
+    cookie     : true, // enable cookies to allow the server to access the session
+    xfbml      : true  // parse XFBML
+  });
+
+  // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
+  // for any authentication related change, such as login, logout or session refresh. This means that
+  // whenever someone who was previously logged out tries to log in again, the correct case below 
+  // will be handled. 
+  FB.Event.subscribe('auth.authResponseChange', function(response) {
+    // Here we specify what we do with the response anytime this event occurs. 
+    if (response.status === 'connected') {
+      // The response object is returned with a status field that lets the app know the current
+      // login status of the person. In this case, we're handling the situation where they 
+      // have logged in to the app.
+      testAPI();
+    } else if (response.status === 'not_authorized') {
+      // In this case, the person is logged into Facebook, but not into the app, so we call
+      // FB.login() to prompt them to do so. 
+      // In real-life usage, you wouldn't want to immediately prompt someone to login 
+      // like this, for two reasons:
+      // (1) JavaScript created popup windows are blocked by most browsers unless they 
+      // result from direct interaction from people using the app (such as a mouse click)
+      // (2) it is a bad experience to be continually prompted to login upon page load.
+      FB.login(function(response) {
+    	   console.log("from login1 with resp ="+response);
+      }, {scope: 'user_birthday, friends_birthday'});
+    } else {
+      // In this case, the person is not logged into Facebook, so we call the login() 
+      // function to prompt them to do so. Note that at this stage there is no indication
+      // of whether they are logged into the app. If they aren't then they'll see the Login
+      // dialog right after they log in to Facebook. 
+      // The same caveats as above apply to the FB.login() call here.
+      FB.login(function(response) {
+    	  console.log("from login2 with resp ="+response);
+      }, {scope: 'user_birthday, friends_birthday'});
+    }
+  });
+  };
+
+  // Load the SDK asynchronously
+  (function(d){
+   var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement('script'); js.id = id; js.async = true;
+   js.src = "//connect.facebook.net/en_US/all.js";
+   ref.parentNode.insertBefore(js, ref);
+  }(document));
+
+  // Here we run a very simple test of the Graph API after login is successful. 
+  // This testAPI() function is only called in those cases. 
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log(response);
+      console.log('Good to see you, ' + response.name + '.');
+      
+    });
+  }
+  
+  $(document).ready(function(){
+	 console.log('from doc ready of jquery'); 
+  });
+  
+  function showPop(textToShow){
+	  $.blockUI({message: '<div onclick="$.unblockUI()">'+ textToShow + '</div>',css: {width:'50%',top:'10%',left:'20%',textAlign:'left',backgroundColor:'pink'} });
+	  //setTimeout($.unblockUI, 5000);
+  }
+
+  
+  function putToolTips(){
+		 $("#ARIES_CAP").simpletip({content:ARIES_TEXT,fixed:false, position:"right", persistent:true});
+		 $("#TAURUS_CAP").simpletip({content:TAURUS_TEXT,fixed:false, position:"right"});
+		 $("#GEMINI_CAP").simpletip({content:GEMINI_TEXT,fixed:false, position:"right"});
+		 $("#CANCER_CAP").simpletip({content:CANCER_TEXT,fixed:false, position:"right"});
+		 $("#LEO_CAP").simpletip({content:LEO_TEXT,fixed:false, position:"right"});
+		 $("#VIRGO_CAP").simpletip({content:VIRGO_TEXT,fixed:false, position:"right"});
+		 $("#LIBRA_CAP").simpletip({content:LIBRA_TEXT,fixed:false, position:"right"});
+		 $("#SCORPIO_CAP").simpletip({content:SCORPIO_TEXT,fixed:false, position:"right"});
+		 $("#SAGITTARIUS_CAP").simpletip({content:SAGITTARIUS_TEXT,fixed:false, position:"right"});
+		 $("#CAPRICORN_CAP").simpletip({content:CAPRICORN_TEXT,fixed:false, position:"right"});
+		 $("#AQUARIUS_CAP").simpletip({content:AQUARIUS_TEXT,fixed:false, position:"right"});
+		 $("#PISCES_CAP").simpletip({content:PISCES_TEXT,fixed:false, position:"right"});
+
+  }
+  
+  function mylogin(){
+	  FB.login(function(response) {
+	   	   console.log("from login0 with resp ="+response);
+	     }, {scope: 'user_birthday, friends_birthday'});
+  }
+  
+  var noBdayDisclosedStr;
+  function displayFriendsPics(){
+	  
+	  FB.api('/me?fields=friends.fields(name,birthday,picture)', function(response) {
+	  //$.getJSON('http://localhost:8888/friendsdata.json',function(response){
+
+		  //console.log(response);
+	      var fdata = response.friends.data;
+	      //console.log(fdata);
+		  
+	      clearImages();
+	      noBdayDisclosedStr = "";
+	      for(var i=0;i<fdata.length;i++){
+	    	  showOneFriend(fdata[i]);
+	      }
+	      $("#noBdayDisclosedList").html("Birthday was not disclosed by: <br><b>"+noBdayDisclosedStr+"</b>")
+	    });
+	  
+	  
+  }
+
+  function removeDataFromDiv(divName){
+	  var rem = $(divName).html().split("<hr>")[0]
+	  $(divName).html(rem+"<hr>");
+  }
+  
+  function clearImages(){
+	  removeDataFromDiv("#mydiv00");
+	  removeDataFromDiv("#mydiv01");
+	  removeDataFromDiv("#mydiv02");
+	  removeDataFromDiv("#mydiv03");
+	  removeDataFromDiv("#mydiv10");
+	  removeDataFromDiv("#mydiv11");
+	  removeDataFromDiv("#mydiv12");
+	  removeDataFromDiv("#mydiv13");
+	  removeDataFromDiv("#mydiv20");
+	  removeDataFromDiv("#mydiv21");
+	  removeDataFromDiv("#mydiv22");
+	  removeDataFromDiv("#mydiv23");
+  }
+  
+
+  
+  function showOneFriend(fbdata){
+	  //console.log(fbdata);
+	  if(fbdata.birthday===undefined){
+	  	  console.log("no bday field found for "+fbdata.name);
+	  	  noBdayDisclosedStr = noBdayDisclosedStr + fbdata.name + ", ";
+		  return;
+	  }
+	  
+	  var bdaydata = fbdata.birthday.split('/');
+	  var month = bdaydata[0];
+	  var day = bdaydata[1];
+	  
+	  //console.log(fbdata.name + ' -> ' +month + ' - ' + day);
+	  var sunsign = getSunSign(day, month);
+	  //console.log("SUNSIGN="+sunsign);
+	  fbdata.sunsign = sunsign;
+	  
+	  display(fbdata);
+	  
+  }
+  
+  function display(fbdata){
+	if(fbdata.sunsign == 'ARIES')
+		spewDiv('#mydiv00', fbdata)
+	else if(fbdata.sunsign == 'TAURUS')
+	 	spewDiv('#mydiv01', fbdata)
+	else if(fbdata.sunsign == 'GEMINI')
+	 	spewDiv('#mydiv02', fbdata)
+	else if(fbdata.sunsign == 'CANCER')
+	 	spewDiv('#mydiv03', fbdata)
+	else if(fbdata.sunsign == 'LEO')
+		spewDiv('#mydiv10', fbdata)
+	else if(fbdata.sunsign == 'VIRGO')
+		spewDiv('#mydiv11', fbdata)
+	else if(fbdata.sunsign == 'LIBRA')
+		spewDiv('#mydiv12', fbdata)
+	else if(fbdata.sunsign == 'SCORPIO')
+		spewDiv('#mydiv13', fbdata)
+	else if(fbdata.sunsign == 'SAGITTARIUS')
+		spewDiv('#mydiv20', fbdata)
+	else if(fbdata.sunsign == 'CAPRICORN')
+		spewDiv('#mydiv21', fbdata)
+	else if(fbdata.sunsign == 'AQUARIUS')
+		spewDiv('#mydiv22', fbdata)
+	else if(fbdata.sunsign == 'PISCES')
+		spewDiv('#mydiv23', fbdata)		
+  }
+  
+  function spewDiv(divName, fbdata){
+	  //$(divName).html($(divName).html()+"<img src='"+fbdata.picture.data.url+"'/>");
+	  var str1;
+	  str1 = $(divName).html();
+	  str1 = str1 + "<img src='"+fbdata.picture.data.url+ "' title='"+ fbdata.name + " - BDay: "+ fbdata.birthday +"'/>";
+	  
+	  
+	  $(divName).html(str1);
+  }
+  
+  function getSunSign(day, month){
+	 
+	  console.log(month+'/'+day+'/2013');
+	  
+	 
+  	  if(dateCheck('03/21/2013','04/20/2013',month+'/'+day+'/2013'))
+   		  return 'ARIES';
+  	  else if(dateCheck('04/21/2013','05/21/2013',month+'/'+day+'/2013'))
+  		  return 'TAURUS';
+  	  else if(dateCheck('05/22/2013','06/21/2013',month+'/'+day+'/2013'))
+		  return 'GEMINI';
+  	  else if(dateCheck('06/22/2013','07/22/2013',month+'/'+day+'/2013'))
+		  return 'CANCER';
+  	  else if(dateCheck('07/22/2013','08/22/2013',month+'/'+day+'/2013'))
+		  return 'LEO';
+  	  else if(dateCheck('08/23/2013','09/22/2013',month+'/'+day+'/2013'))
+		  return 'VIRGO';
+  	  else if(dateCheck('09/23/2013','10/22/2013',month+'/'+day+'/2013'))
+		  return 'LIBRA';
+  	  else if(dateCheck('10/23/2013','11/21/2013',month+'/'+day+'/2013'))
+		  return 'SCORPIO';
+  	  else if(dateCheck('11/22/2013','12/21/2013',month+'/'+day+'/2013'))
+		  return 'SAGITTARIUS';
+  	  else if(dateCheck('12/22/2013','12/31/2013',month+'/'+day+'/2013')
+  			 || dateCheck('01/01/2013','01/20/2013',month+'/'+day+'/2013') )
+		  return 'CAPRICORN';
+  	  else if(dateCheck('01/21/2013','02/19/2013',month+'/'+day+'/2013'))
+		  return 'AQUARIUS';
+  	  else if(dateCheck('02/20/2013','03/20/2013',month+'/'+day+'/2013'))
+		  return 'PISCES';
+  
+
+  }
+  
+  
+  function dateCheck(from, to, check) {
+
+	    var fDate,lDate,cDate;
+	    fDate = Date.parse(from);
+	    lDate = Date.parse(to);
+	    cDate = Date.parse(check);
+
+	    if((cDate <= lDate && cDate >= fDate)) {
+	        return true;
+	    }
+	    return false;
+}
+  
+  
+  
+  
+</script>
+
+<!--
+  Below we include the Login Button social plugin. This button uses the JavaScript SDK to
+  present a graphical Login button that triggers the FB.login() function when clicked.
+
+  Learn more about options for the login button plugin:
+  /docs/reference/plugins/login/ -->
+
+<!--  
+<fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
+-->
+<div style="background-color: #eeeff4">
+Step 1.&nbsp;<input style="background-color: #eeeff4" type="button" value="Login & Grant Permissions" onclick="mylogin();"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Step 2.&nbsp;<input style="background-color: #eeeff4" type="button" value="Get Friends List" onclick="displayFriendsPics();"/>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<b>Click Sun Sign Heading for typical qualities of sun sign. </b>
+
+&nbsp;&nbsp;
+<fb:like href="http://sunsigns4friends.appspot.com/index.html" width="450" show_faces="true" send="false" app_id="630015040376496"></fb:like>
+<hr>
+
+
+</div>
+
+<table width="100%" height="90%" border="1">
+	<tr>
+	<td><div id="mydiv00" name="mydiv00" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="ARIES_CAP" onclick="showPop('ARIES : '+ARIES_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Aries (Mar 21 - Apr 20)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv01" name="mydiv01" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="TAURUS_CAP" onclick="showPop('TAURUS : '+TAURUS_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Taurus (Apr  21 - May 21)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv02" name="mydiv02" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="GEMINI_CAP" onclick="showPop('GEMINI : '+GEMINI_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Gemini (May 22 - Jun 21)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv03" name="mydiv03" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="CANCER_CAP" onclick="showPop('CANCER : '+CANCER_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Cancer (Jun 22 - Jul 22)</font></b></i><hr></div></td>
+	</tr>
+	
+	<tr>
+	<td><div id="mydiv10" name="mydiv10" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="LEO_CAP" onclick="showPop('LEO : '+LEO_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Leo (JUl 23 - Aug 22)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv11" name="mydiv11" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="VIRGO_CAP" onclick="showPop('VIRGO : '+VIRGO_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Virgo (Aug 23 - Sep 22)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv12" name="mydiv12" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="LIBRA_CAP" onclick="showPop('LIBRA : '+LIBRA_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Libra (Sep 23 - Oct 22)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv13" name="mydiv13" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="SCORPIO_CAP" onclick="showPop('SCORPIO : '+SCORPIO_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Scorpio (Oct 23 - Nov 21)</font></b></i></span><hr></div></td>
+	</tr>
+
+
+	<tr>
+	<td><div id="mydiv20" name="mydiv20" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="SAGITTARIUS_CAP" onclick="showPop('SAGITTARIUS : '+SAGITTARIUS_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Sagittarius (Nov 22 - Dec 21)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv21" name="mydiv21" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="CAPRICORN_CAP" onclick="showPop('CAPRICORN : '+CAPRICORN_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Capricorn (Dec 22 - Jan 20)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv22" name="mydiv22" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="AQUARIUS_CAP" onclick="showPop('AQUARIUS : '+AQUARIUS_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Aquarius (Jan 21 - Feb 19)</font></b></i></span><hr></div></td>
+	<td><div id="mydiv23" name="mydiv23" style="width: 100%; height: 100%; background-color: #eeeff4;"><span id="PISCES_CAP" onclick="showPop('PISCES : '+PISCES_TEXT)"><b><i><font size="2" color="blue" face="sans-serif">Pisces (Feb 20 - Mar 20)</font></b></i></span><hr></div></td>
+	</tr>
+
+</table>
+
+<p>
+<div id="noBdayDisclosedList" name="noBdayDisclosedList"></div>
+<p>
+<!-- https://apps.facebook.com/630015040376496 -->
+
+<div class="fb-comments" data-href="https://apps.facebook.com/630015040376496" data-width="470"></div>
+
+<a href="#" 
+  onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href), 
+      'facebook-share-dialog', 
+      'width=626,height=436'); 
+    return false;">
+  Share on Facebook
+</a>
+
+</body>
+</html>

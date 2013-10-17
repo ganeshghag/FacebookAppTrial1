@@ -1,0 +1,43 @@
+{
+  "id": "830017589", 
+  "friends": {
+    "data": [
+      {
+        "name": "Raju Lalvani", 
+        "birthday": "11/08", 
+        "id": "518891778", 
+        "picture": {
+          "data": {
+            "url": "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn1/41400_518891778_5752_q.jpg", 
+            "is_silhouette": false
+          }
+        }
+      }, 
+      {
+        "name": "Mangesh Hirve", 
+        "birthday": "01/12/1974", 
+        "id": "526979757", 
+        "picture": {
+          "data": {
+            "url": "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/275852_526979757_7114477_q.jpg", 
+            "is_silhouette": false
+          }
+        }
+      },
+      {
+        "name": "Vidya Temkar", 
+        "birthday": "01/15/1958", 
+        "id": "100006069215445", 
+        "picture": {
+          "data": {
+            "url": "https://fbcdn-profile-a.akamaihd.net/static-ak/rsrc.php/v2/y9/r/IB7NOFmPw2a.gif", 
+            "is_silhouette": true
+          }
+        }
+      }
+    ], 
+    "paging": {
+      "next": "https://graph.facebook.com/830017589/friends?fields=name,birthday,picture&limit=5000&offset=5000&__after_id=100006069215445"
+    }
+  }
+}
